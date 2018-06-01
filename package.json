@@ -1,0 +1,44 @@
+{
+  "name": "spark-protocol-synergy",
+  "version": "0.1.7",
+  "license": "AGPL-3.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IoT-Expedition/spark-protocol-synergy.git"
+  },
+  "author": {
+    "name": "David Middlecamp",
+    "email": "david@spark.io",
+    "url": "https://www.spark.io/"
+  },
+  "contributors": [
+    {
+      "name": "Sudershan Boovaraghavan",
+      "email": "sud335@gmail.com"
+    },
+    {
+      "name": "Chen Chen",
+      "email": "chenchenece@gmail.com"
+    },
+    {
+      "name": "Abhijit Hota",
+      "email": "hotaabhijit777@gmail.com"
+    }
+  ],
+  "bugs": {
+    "url": "https://github.com/IoT-Expedition/spark-protocol-synergy/issues"
+  },
+  "homepage": "https://github.com/IoT-Expedition/spark-protocol-synergy#readme",
+  "dependencies": {
+    "buffer-crc32": "~0.2.3",
+    "h5.buffers": "~0.1.1",
+    "h5.coap": "git+https://github.com/morkai/h5.coap.git",
+    "hogan.js": "*",
+    "ursa": "*",
+    "when": "*",
+    "moment": "*",
+    "xtend": "*"
+  }
+}
