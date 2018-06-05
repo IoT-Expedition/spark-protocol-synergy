@@ -69,9 +69,16 @@ typings/
 # Remove keys
 *.pem
 *.pub.pem
+*.der
 core_keys/*
+server/core_keys/*
+server/*.pem
+server/*.pub.pem
+server/*.der
 
 # Mac
 .DS_Store
 
-
+#IDE
+.idea/*
+.package-lock.json
