@@ -32,6 +32,8 @@
   },
   "homepage": "https://github.com/IoT-Expedition/spark-protocol-synergy#readme",
   "dependencies": {
+    "node-gyp": "*",
+    "bindings": "*",
     "buffer-crc32": "~0.2.3",
     "h5.buffers": "~0.1.1",
     "h5.coap": "git+https://github.com/morkai/h5.coap.git",

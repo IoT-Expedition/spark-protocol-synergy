@@ -160,9 +160,9 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         this.on(('msg_' + 'PrivateEvent').toLowerCase(), this.onCorePrivateEvent.bind(this));
         this.on(('msg_' + 'PublicEvent').toLowerCase(), this.onCorePublicEvent.bind(this));
         this.on(('msg_' + 'SynergyProtocol').toLowerCase(), this.onCoreSynergyProtocol.bind(this)); // Synergy custom protocol
+        this.on(('msg_' + 'Attribute').toLowerCase(), this.onCoreAttribute.bind(this))
         this.on(('msg_' + 'Subscribe').toLowerCase(), this.onCorePublicSubscribe.bind(this));
         this.on(('msg_' + 'GetTime').toLowerCase(), this.onCoreGetTime.bind(this));// TimeSync with the backend.
-
 
         this.emit("ready");
     },
@@ -353,6 +353,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
 
     /**
      * Deals with messages coming from the core over our secure connection
+     * CHANGE: remove message id comparisons
      * @param data
      */
     routeMessage: function (data) {
@@ -403,19 +404,25 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
             return;
         }
 
-        if (!msg || (msg.getId() != nextPeerCounter)) {
+        // TODO: revised
+        if (!msg) {
             logger.log("got counter ", msg.getId(), " expecting ", nextPeerCounter, { coreID: this.getHexCoreID() });
-
-            if (msg._type == "Ignored") {
-                //don't ignore an ignore...
-                this.disconnect("Got an Ignore");
-                return;
-            }
-
-            //this.sendMessage("Ignored", null, {}, null, null);
-            this.disconnect("Bad Counter");
             return;
         }
+
+        // if (!msg || (msg.getId() != nextPeerCounter)) {
+        //     logger.log("got counter ", msg.getId(), " expecting ", nextPeerCounter, { coreID: this.getHexCoreID() });
+        //
+        //     if (msg._type == "Ignored") {
+        //         //don't ignore an ignore...
+        //         this.disconnect("Got an Ignore");
+        //         return;
+        //     }
+        //
+        //     //this.sendMessage("Ignored", null, {}, null, null);
+        //     this.disconnect("Bad Counter");
+        //     return;
+        // }
 
         this.emit(('msg_' + msg._type).toLowerCase(), msg);
     },
@@ -1021,35 +1028,75 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         this.onCoreSentEvent(msg, true);
     },
 
+    /**
+     * @author Sudershan Boovaraghavan, Chen Chen and Abhijit Hota
+     * @description: revised by SynergyLabs @ Carnegie Mellon University (2018).
+     *
+     * This function includes implementation for the mac and version receiving handler
+     * The unwrapped data is parsed by getPayload()-->returns a buffer
+     * @param msg
+     *
+     */
+    onCoreAttribute: function(msg) {
+        if (msg == null) return;
+        else {
+            try {
+                var payload = new Buffer(msg.getPayload(), 'binary');
+                if (Buffer.byteLength(payload) != 8) {
+                    this.disconnect('error on fetching attribute');
+                } else {
+
+                    var mac = new Buffer(6);
+                    var stream_protocol_version = new Buffer(2);
+                    payload.copy(mac, 0, 0, 6);
+                    payload.copy(stream_protocol_version, 0, 6, 2);
+                    mac = mac.toString('hex');
+                    stream_protocol_version = stream_protocol_version.toString('hex');
+
+                    /* save some i/o overheat */
+                    if (this.mac == mac && this.stream_protocol_version == stream_protocol_version) return;
+
+                    this.mac = mac;
+                    this.stream_protocol_version = stream_protocol_version;
+
+                    require('stream-handler').setController(this.getHexCoreID(),
+                        {
+                            mac: this.mac,
+                            stream_protocol_version: this.stream_protocol_version,
+                        }
+                    );
+
+                    /* save the value */
+                    require('stream-handler').saveCoreData(
+                        this.getHexCoreID(),
+                        {
+                            mac: this.mac,
+                            stream_protocol_version: this.stream_protocol_version,
+                        },
+                        settings.coreKeysDir
+                    );
+
+                }
+            } catch (ex) {
+                logger.error(ex);
+            }
+        }
+    },
 
     /**
-     * @author udershan Boovaraghavan, Chen Chen and Abhijit Hota
+     * @author Sudershan Boovaraghavan, Chen Chen and Abhijit Hota
      * @description: revised by SynergyLabs @ Carnegie Mellon University (2018).
      *
      * This function includes implementation for the SynergyProtocol receiving handler
      * The unwrapped data is parsed by getPayload()-->returns a buffer
      *
-     * TODO : The coreID is extracted and then it is written to another Stream, which is later used for streaming purposes.
-
      * @param msg
-     *
      */
-    onCoreSynergyProtocol: function(msg) { // this message is already unwrapped!!
-        if (msg == null) {
-            return;
-        }
+    onCoreSynergyProtocol: function(msg) {
+        if (msg == null) return;
 
-        var payload = msg.getPayload();
-        var inBuf = new Buffer(payload, 'binary');
-        var ptr = 0;
-        var msgLen = inBuf.byteLength;
-
-        if (msgLen < 0) return;
-
-        var localCoreID = this.getHexCoreID();
-
-        console.log(new Date().toString() + " SynergyProtocol receive " + localCoreID + " " + msgLen + "  bytes id: " + msg.id);
-
+        // TODO:
+        require('stream-handler').handler(this.getHexCoreID(), new Buffer(msg.getPayload(),'binary'), msg.id);
     },
 
     onCoreSentEvent: function(msg, isPublic) {

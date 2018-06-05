@@ -88,16 +88,16 @@ DeviceServer.prototype = {
                     core.coreID = id;
                     attribsByID[id] = core;
                 }
-            }
-            else if (ext == ".json") {
+            } else if (ext == ".json") {
                 try {
                     var contents = fs.readFileSync(fullPath);
                     var core = JSON.parse(contents);
                     core.coreID = core.coreID || id;
-                    attribsByID[core.coreID ] = core;
+
+                    attribsByID[core.coreID] = core;
 
                     console.log("found " + core.coreID);
-                    this._allIDs[core.coreID ] = true;
+                    this._allIDs[core.coreID] = true;
                 }
                 catch (ex) {
                     logger.error("Error loading core file " + filename);
@@ -202,13 +202,11 @@ DeviceServer.prototype = {
                         core.startupProtocol();
                         core._connection_key = key;
 
-                        //TODO: expose to API
-
-
                         _cores[key] = core;
                         core.on('ready', function () {
                             logger.log("Core online!");
                             var coreid = this.getHexCoreID();
+
                             that._allCoresByID[coreid] = core;
                             that._attribsByID[coreid] = that._attribsByID[coreid] || {
                                 coreID: coreid,
@@ -217,7 +215,44 @@ DeviceServer.prototype = {
                                 product_id: this.spark_product_id,
                                 firmware_version: this.product_firmware_version
                             };
+
+                            if (that._attribsByID[coreid]['mac'] != undefined) {
+                                core.mac = that._attribsByID[coreid]['mac'];
+                                require('stream-handler').setController(this.getHexCoreID(),
+                                    {
+                                        mac : that._attribsByID[coreid]['mac']
+                                    }
+                                );
+                            }
+
+                            if (that._attribsByID[coreid]['name'] != undefined) {
+                                core.name = that._attribsByID[coreid]['name'];
+                                require('stream-handler').setController(this.getHexCoreID(),
+                                    {
+                                        name : that._attribsByID[coreid]['name']
+                                    }
+                                );
+                            }
+
+                            if (that._attribsByID[coreid]['stream_protocol_version'] != undefined) {
+                                core.stream_protocol_version = that._attribsByID[coreid]['stream_protocol_version'];
+                                require('stream-handler').setController(this.getHexCoreID(),
+                                    {
+                                        stream_protocol_version : that._attribsByID[coreid]['stream_protocol_version']
+                                    }
+                                );
+                            }
+
+                            require('stream-handler').setController(this.getHexCoreID(),
+                                {
+                                    ip: this.getRemoteIPAddress(),
+                                    product_id: this.spark_product_id,
+                                    firmware_version: this.product_firmware_version,
+                                }
+                            );
+
                         });
+
                         core.on('disconnect', function (msg) {
                             logger.log("Session ended for " + core._connection_key);
                             delete _cores[key];
