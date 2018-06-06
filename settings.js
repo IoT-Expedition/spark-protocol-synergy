@@ -22,11 +22,10 @@ module.exports = {
     PORT: 5683,
     HOST: "localhost",
 
-
     /**
      * Your server crypto keys!
      */
-    serverKeyFile: "default_key.pem",
+    serverKeyFile: path.join('.', 'srv_keys', 'default_key.pem'),
     serverKeyPassFile: null,
     serverKeyPassEnvVar: null,
 

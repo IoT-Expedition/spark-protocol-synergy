@@ -218,7 +218,7 @@ DeviceServer.prototype = {
 
                             if (that._attribsByID[coreid]['mac'] != undefined) {
                                 core.mac = that._attribsByID[coreid]['mac'];
-                                require('stream-handler').setController(this.getHexCoreID(),
+                                require('synergy-stream-handler').setController(this.getHexCoreID(),
                                     {
                                         mac : that._attribsByID[coreid]['mac']
                                     }
@@ -227,7 +227,7 @@ DeviceServer.prototype = {
 
                             if (that._attribsByID[coreid]['name'] != undefined) {
                                 core.name = that._attribsByID[coreid]['name'];
-                                require('stream-handler').setController(this.getHexCoreID(),
+                                require('synergy-stream-handler').setController(this.getHexCoreID(),
                                     {
                                         name : that._attribsByID[coreid]['name']
                                     }
@@ -236,14 +236,14 @@ DeviceServer.prototype = {
 
                             if (that._attribsByID[coreid]['stream_protocol_version'] != undefined) {
                                 core.stream_protocol_version = that._attribsByID[coreid]['stream_protocol_version'];
-                                require('stream-handler').setController(this.getHexCoreID(),
+                                require('synergy-stream-handler').setController(this.getHexCoreID(),
                                     {
                                         stream_protocol_version : that._attribsByID[coreid]['stream_protocol_version']
                                     }
                                 );
                             }
 
-                            require('stream-handler').setController(this.getHexCoreID(),
+                            require('synergy-stream-handler').setController(this.getHexCoreID(),
                                 {
                                     ip: this.getRemoteIPAddress(),
                                     product_id: this.spark_product_id,

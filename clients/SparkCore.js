@@ -1059,7 +1059,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
                     this.mac = mac;
                     this.stream_protocol_version = stream_protocol_version;
 
-                    require('stream-handler').setController(this.getHexCoreID(),
+                    require('synergy-stream-handler').setController(this.getHexCoreID(),
                         {
                             mac: this.mac,
                             stream_protocol_version: this.stream_protocol_version,
@@ -1067,7 +1067,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
                     );
 
                     /* save the value */
-                    require('stream-handler').saveCoreData(
+                    require('synergy-stream-handler').saveCoreData(
                         this.getHexCoreID(),
                         {
                             mac: this.mac,
@@ -1096,7 +1096,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         if (msg == null) return;
 
         // TODO:
-        require('stream-handler').handler(this.getHexCoreID(), new Buffer(msg.getPayload(),'binary'), msg.id);
+        require('synergy-stream-handler').handler(this.getHexCoreID(), new Buffer(msg.getPayload(),'binary'), msg.id);
     },
 
     onCoreSentEvent: function(msg, isPublic) {
