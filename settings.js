@@ -45,7 +45,7 @@ module.exports = {
     /**
      * How long will the idle socket being removed?
      */
-    socket_time_out: 1000,
+    socket_time_out: 120000,
 
     verboseProtocol: false
 };
