@@ -111,10 +111,20 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
             that.disconnect("socket error " + err);
         });
 
-        this.socket.on('close', function (err) { that.disconnect("socket close " + err); });
-        this.socket.on('timeout', function (err) { that.disconnect("socket timeout " + err); });
+        this.socket.on('close', function (err) { 
+            if (!err) err = '';
+            that.disconnect("socket close " + err); 
+        });
 
-        this.socket.on('end', function () {logger.log("socket end");});
+        this.socket.on('timeout', function (err) { 
+            if (!err) err = '';
+            that.disconnect("socket timeout " + err); 
+        });
+
+        this.socket.on('end', function () {
+            if (!err) err = '';
+            that.disconnect("socket end " + err); 
+        });
 
         this.handshake();
     },
