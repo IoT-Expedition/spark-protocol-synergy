@@ -42,5 +42,10 @@ module.exports = {
      */
     message_token_max: 255,
 
+    /**
+     * How long will the idle socket being removed?
+     */
+    socket_time_out: 1000,
+
     verboseProtocol: false
 };

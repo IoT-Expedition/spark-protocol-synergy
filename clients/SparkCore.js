@@ -106,6 +106,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         var that = this;
         this.socket.setNoDelay(true);
         this.socket.setKeepAlive(true, 3600 * 1000); //every 1 hr
+        this.socket.setTimeout(settings.socket_time_out);
         this.socket.on('error', function (err) {
             that.disconnect("socket error " + err);
         });
