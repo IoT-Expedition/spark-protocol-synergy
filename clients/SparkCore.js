@@ -156,7 +156,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
      */
     ready: function () {
         //oh hai!
-        this._connStartTime = new Date();
+        this._connStartTime = new Date().getTime();
 
         logger.log("on ready", {
             coreID: this.getHexCoreID(),
@@ -376,7 +376,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
             return;
         }
 
-        this._lastMessageTime = new Date();
+        this._lastMessageTime = new Date().getTime();
 
         //should be adequate
         var msgCode = msg.getCode();
@@ -408,7 +408,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         }
 
         if (msg.isEmpty() && msg.isConfirmable()) {
-            this._lastCorePing = new Date();
+            this._lastCorePing = new Date().getTime();
             //var delta = (this._lastCorePing - this._connStartTime) / 1000.0;
             //logger.log("core ping @ ", delta, " seconds ", { coreID: this.getHexCoreID() });
             this.sendReply("PingAck", msg.getId());
@@ -1432,7 +1432,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         try {
             var logInfo = { coreID: this.getHexCoreID(), cache_key: this._connection_key };
             if (this._connStartTime) {
-                var delta = ((new Date()) - this._connStartTime) / 1000.0;
+                var delta = ((new Date().getTime()) - this._connStartTime) / 1000.0;
                 logInfo['duration'] = delta;
             }
 
