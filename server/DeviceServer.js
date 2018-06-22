@@ -250,12 +250,25 @@ DeviceServer.prototype = {
                                     firmware_version: this.product_firmware_version,
                                 }
                             );
+                            
+                            /* online */
+                            if (global.online_devices == undefined) global.online_devices = {};
+                            global.online_devices[coreid] =
+                                {
+                                    mites_id: coreid,
+                                    timestamp: new Date().getTime().toString()
+                                };
 
                         });
 
                         core.on('disconnect', function (msg) {
                             logger.log("Session ended for " + core._connection_key);
                             delete _cores[key];
+                            
+                            /* offline */
+                            if (global.online_devices == undefined) global.online_devices = {};
+                            else delete global.online_devices[coreid];
+                            
                         });
                     }
                     catch (ex) {
