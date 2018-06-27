@@ -122,7 +122,7 @@ SparkCore.prototype = extend(ISparkCore.prototype, EventEmitter.prototype, {
         });
 
         this.socket.on('end', function () {
-            that.disconnect("socket end " + err); 
+            that.disconnect("socket end "); 
         });
 
         this.handshake();
