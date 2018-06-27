@@ -265,7 +265,7 @@ DeviceServer.prototype = {
                             logger.log("Session ended for " + core._connection_key);
                             delete _cores[key];
                             
-                            /* offline */
+                            var coreid = this.getHexCoreID();
                             if (global.online_devices == undefined) global.online_devices = {};
                             else delete global.online_devices[coreid];
                             
